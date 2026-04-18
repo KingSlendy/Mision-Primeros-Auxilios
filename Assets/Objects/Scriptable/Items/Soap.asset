@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f85bc007c3dc13747b8a26b850caa45f, type: 3}
-  m_Name: Water
-  m_EditorClassIdentifier: Assembly-CSharp::Items
-  Name: Agua
-  Icon: {fileID: 6049605792901559095, guid: a1803b4a2b55b914dbf96388b7457198, type: 3}
+  m_Name: Soap
+  m_EditorClassIdentifier: Assembly-CSharp::MedicalItem
+  Name: "Jab\xF3n"
+  Icon: {fileID: 1025785841229483327, guid: 01d99d2360ef10541beadf8911257ffd, type: 3}

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f85bc007c3dc13747b8a26b850caa45f, type: 3}
-  m_Name: Water
-  m_EditorClassIdentifier: Assembly-CSharp::Items
-  Name: Agua
-  Icon: {fileID: 6049605792901559095, guid: a1803b4a2b55b914dbf96388b7457198, type: 3}
+  m_Name: Ice
+  m_EditorClassIdentifier: Assembly-CSharp::MedicalItem
+  Name: Hielo
+  Icon: {fileID: -7560284153744367771, guid: ecf3efd61f07526409f7c64a77728202, type: 3}
