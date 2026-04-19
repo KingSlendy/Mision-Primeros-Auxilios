@@ -2,12 +2,13 @@ using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class Controller : MonoBehaviour {
     public GameObject Dialogue;
     public GameObject Item;
+    public Image Back;
 
     public MedicalScenario[] Scenarios;
 
@@ -35,6 +36,7 @@ public class Controller : MonoBehaviour {
     void StartScenario() {
         //Spawns all the necessary medical items, and an extra dummy medical item
         currentScenario = Scenarios[0];
+        Back.sprite = currentScenario.Backgrounds[Random.Range(0, currentScenario.Backgrounds.Length)];
         var itemCount = currentScenario.NecessaryItems.Length + 1;
         var shuffledItems = currentScenario.NecessaryItems.OrderBy(x => Random.Range(0, itemCount)).Append(currentScenario.DummyItem).ToArray();
 
