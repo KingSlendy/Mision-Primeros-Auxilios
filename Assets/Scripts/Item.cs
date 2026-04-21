@@ -4,6 +4,8 @@ using UnityEngine.InputSystem;
 
 public class Item : MonoBehaviour {
     public Collider2D Collider;
+    public GameObject Valid;
+    public GameObject Invalid;
     public InputActionReference InputClick;
     public Controller Controller;
     public GameObject Dialogue;
@@ -26,7 +28,7 @@ public class Item : MonoBehaviour {
 
     void Update() {
         var levitateY = startY + 0.05f * (float)Math.Sin(angle);
-        gameObject.transform.localPosition = new Vector3(startX, levitateY, 0);
+        gameObject.transform.localPosition = new Vector3(startX, levitateY, gameObject.transform.localPosition.z);
         angle = (angle + 360 + (AngleSpeed * Time.deltaTime)) % 360;
     }
 
@@ -40,10 +42,24 @@ public class Item : MonoBehaviour {
 
         if (hit.collider == Collider) {
             if (Controller.ValidateScenarioStep(InfoItem)) {
-                Controller.AdvanceScenarioStep();
+                Controller.AdvanceScenarioStep(gameObject);
             } else {
-                Controller.WrongScenarioStep(InfoItem);
+                Controller.WrongScenarioStep(gameObject);
             }
         }
+    }
+
+    public void ShowValid() {
+        Valid.SetActive(true);
+    }
+
+    public void ShowInvalid() {
+        Invalid.SetActive(true);
+        Invoke(nameof(HideValidity), 1f);
+    }
+
+    void HideValidity()  {
+        Valid.SetActive(false);
+        Invalid.SetActive(false);
     }
 }

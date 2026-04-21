@@ -8,14 +8,17 @@ using Random = UnityEngine.Random;
 public class Controller : MonoBehaviour {
     public GameObject Dialogue;
     public GameObject Item;
-    public Image Back;
+    public SpriteRenderer Background;
+    public Image TimeBarFill;
 
     public MedicalScenario[] Scenarios;
 
     public InputActionReference InputClick;
 
     MedicalScenario currentScenario;
-    int scenarioStep = 0;
+    int scenarioStep;
+    int scenarioTime;
+    int scenarioFails;
 
     void Awake() {
         InputClick.action.started += DoClick;
@@ -23,6 +26,11 @@ public class Controller : MonoBehaviour {
 
     void Start() {
         StartScenario();
+    }
+
+    void Update() {
+        //TimeBarFill.fillAmount = Mathf.Lerp(TimeBarFill.fillAmount, scenarioTime / currentScenario.TimeInSeconds, 0.75f * Time.deltaTime);
+        TimeBarFill.fillAmount = (float)scenarioTime / currentScenario.TimeInSeconds;
     }
 
     void DoClick(InputAction.CallbackContext context) {
@@ -36,7 +44,9 @@ public class Controller : MonoBehaviour {
     void StartScenario() {
         //Spawns all the necessary medical items, and an extra dummy medical item
         currentScenario = Scenarios[0];
-        Back.sprite = currentScenario.Backgrounds[Random.Range(0, currentScenario.Backgrounds.Length)];
+        Background.sprite = currentScenario.Backgrounds[Random.Range(0, currentScenario.Backgrounds.Length)];
+        Background.gameObject.transform.localScale = new Vector3(1920f / Background.sprite.rect.width, 1080f / Background.sprite.rect.height, 1f);
+
         var itemCount = currentScenario.NecessaryItems.Length + 1;
         var shuffledItems = currentScenario.NecessaryItems.OrderBy(x => Random.Range(0, itemCount)).Append(currentScenario.DummyItem).ToArray();
 
@@ -45,6 +55,7 @@ public class Controller : MonoBehaviour {
         }
 
         scenarioStep = 0;
+        StartScenarioTime();
     }
 
     void SpawnMedicalItem(MedicalItem item, Vector2 area) {
@@ -57,25 +68,52 @@ public class Controller : MonoBehaviour {
         shadowObject.GetComponent<SpriteRenderer>().sprite = item.Icon;
     }
 
+    void StartScenarioTime() {
+        scenarioTime = currentScenario.TimeInSeconds;
+        InvokeRepeating(nameof(SubtractScenarioTime), 1f, 1f);
+    }
+
+    void SubtractScenarioTime() {
+        scenarioTime--;
+
+        if (scenarioTime < 0) {
+            scenarioTime = 0;
+            Debug.Log("Time's up!");
+        }
+    }
+
     public bool ValidateScenarioStep(MedicalItem item) {
         return (currentScenario.NecessaryItems[scenarioStep] == item);
     }
 
-    public void AdvanceScenarioStep() {
+    public void AdvanceScenarioStep(GameObject item) {
+        var itemComponent = item.GetComponent<Item>();
+        itemComponent.ShowValid();
         Debug.Log("Correct Item!");
+        scenarioFails = 0;
 
-        if (scenarioStep++ >= currentScenario.NecessaryItems.Length - 1) {
+        if (scenarioStep >= currentScenario.NecessaryItems.Length - 1) {
             scenarioStep = 0;
             Debug.Log(currentScenario.SuccessMessage);
             //Complete Scenario
+            return;
         }
+
+        scenarioStep++;
     }
 
-    public void WrongScenarioStep(MedicalItem item) {
-        if (item != currentScenario.DummyItem) {
-            Debug.Log(currentScenario.FailMessages[scenarioStep]);
-        } else {
-            Debug.Log(currentScenario.FailMessages[^1]);
+    public void WrongScenarioStep(GameObject item) {
+        var itemComponent = item.GetComponent<Item>();
+        itemComponent.ShowInvalid();
+        scenarioTime -= 30;
+        scenarioFails++;
+
+        if (scenarioFails % 3 == 0) {
+            if (itemComponent.InfoItem != currentScenario.DummyItem) {
+                Debug.Log(currentScenario.FailMessages[scenarioStep]);
+            } else {
+                Debug.Log(currentScenario.FailMessages[^1]);
+            }
         }
     }
 }

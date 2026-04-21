@@ -5,6 +5,7 @@ public class MedicalScenario : ScriptableObject {
     public string Name;
     public MedicalItem[] NecessaryItems;
     public MedicalItem DummyItem;
+    public int TimeInSeconds;
     public Sprite[] Backgrounds;
     public string StartMessage;
     public string[] FailMessages;

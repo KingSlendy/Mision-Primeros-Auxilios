@@ -19,6 +19,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e2ffd7e7b73937849964eacc2ae5c8cd, type: 2}
   - {fileID: 11400000, guid: bd42f65a1f973884ca498e6377e86df1, type: 2}
   DummyItem: {fileID: 11400000, guid: 904a1242112734a49b91934038cc2886, type: 2}
+  TimeInSeconds: 120
   Backgrounds:
   - {fileID: -7411974349392773033, guid: eefceb4f4a0c9034997484e52b23b0e4, type: 3}
   - {fileID: -6871032511782127585, guid: 7ae2c61567741d646b64e07f4f43aa08, type: 3}
