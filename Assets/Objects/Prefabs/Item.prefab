@@ -417,6 +417,7 @@ MonoBehaviour:
   Valid: {fileID: 7939327200857645479}
   Invalid: {fileID: 5723157093749410946}
   InputClick: {fileID: 3001919216989983466, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  InputPoint: {fileID: -1654692200621890270, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   Controller: {fileID: 0}
   Dialogue: {fileID: 0}
   InfoItem: {fileID: 0}

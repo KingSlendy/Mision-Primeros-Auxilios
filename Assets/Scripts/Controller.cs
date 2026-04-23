@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -15,12 +16,14 @@ public class Controller : MonoBehaviour {
 
     public InputActionReference InputClick;
 
+    TextMeshProUGUI dialogueText;
     MedicalScenario currentScenario;
     int scenarioStep;
     int scenarioTime;
     int scenarioFails;
 
     void Awake() {
+        dialogueText = Dialogue.transform.Find("Region").Find("Text").GetComponent<TextMeshProUGUI>();
         InputClick.action.started += DoClick;
     }
 
@@ -36,9 +39,12 @@ public class Controller : MonoBehaviour {
     void DoClick(InputAction.CallbackContext context) {
         if (Dialogue.activeSelf) {
             Dialogue.SetActive(false);
-        } else {
-            //Debug.Log("Click!");
         }
+    }
+
+    void StartDialogue(string message) {
+        dialogueText.text = message;
+        Dialogue.SetActive(true);
     }
 
     void StartScenario() {
@@ -55,7 +61,8 @@ public class Controller : MonoBehaviour {
         }
 
         scenarioStep = 0;
-        StartScenarioTime();
+        StartDialogue(currentScenario.StartMessage);
+        //StartScenarioTime();
     }
 
     void SpawnMedicalItem(MedicalItem item, Vector2 area) {
@@ -79,6 +86,7 @@ public class Controller : MonoBehaviour {
         if (scenarioTime < 0) {
             scenarioTime = 0;
             Debug.Log("Time's up!");
+            StartDialogue("¡Se acabó el tiempo! No lograste curar al paciente...");
         }
     }
 
@@ -89,12 +97,11 @@ public class Controller : MonoBehaviour {
     public void AdvanceScenarioStep(GameObject item) {
         var itemComponent = item.GetComponent<Item>();
         itemComponent.ShowValid();
-        Debug.Log("Correct Item!");
         scenarioFails = 0;
 
         if (scenarioStep >= currentScenario.NecessaryItems.Length - 1) {
             scenarioStep = 0;
-            Debug.Log(currentScenario.SuccessMessage);
+            StartDialogue(currentScenario.SuccessMessage);
             //Complete Scenario
             return;
         }
@@ -110,9 +117,9 @@ public class Controller : MonoBehaviour {
 
         if (scenarioFails % 3 == 0) {
             if (itemComponent.InfoItem != currentScenario.DummyItem) {
-                Debug.Log(currentScenario.FailMessages[scenarioStep]);
+                StartDialogue(currentScenario.FailMessages[scenarioStep]);
             } else {
-                Debug.Log(currentScenario.FailMessages[^1]);
+                StartDialogue(currentScenario.FailMessages[^1]);
             }
         }
     }

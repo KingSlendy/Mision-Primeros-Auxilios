@@ -7,6 +7,7 @@ public class Item : MonoBehaviour {
     public GameObject Valid;
     public GameObject Invalid;
     public InputActionReference InputClick;
+    public InputActionReference InputPoint;
     public Controller Controller;
     public GameObject Dialogue;
     public MedicalItem InfoItem;
@@ -15,11 +16,12 @@ public class Item : MonoBehaviour {
     float startY;
     float angle = 0;
     const int AngleSpeed = 3;
+    bool dialoguePreviousActive = true;
 
     void Awake() {
         InputClick.action.started += DoClick;
         Controller = FindAnyObjectByType<Controller>();
-        Dialogue = GameObject.Find("Dialogue");
+        Dialogue = Controller.Dialogue;
     }
 
     void Start() {
@@ -33,20 +35,20 @@ public class Item : MonoBehaviour {
     }
 
     void DoClick(InputAction.CallbackContext context) {
-        if (Dialogue.activeSelf) {
-            return;
-        }
+        if (!dialoguePreviousActive) {
+            var ray = Camera.main.ScreenToWorldPoint(InputPoint.action.ReadValue<Vector2>());
+            var hit = Physics2D.Raycast(ray, Vector2.zero);
 
-        var ray = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-        var hit = Physics2D.Raycast(ray, Vector2.zero);
-
-        if (hit.collider == Collider) {
-            if (Controller.ValidateScenarioStep(InfoItem)) {
-                Controller.AdvanceScenarioStep(gameObject);
-            } else {
-                Controller.WrongScenarioStep(gameObject);
+            if (hit.collider == Collider) {
+                if (Controller.ValidateScenarioStep(InfoItem)) {
+                    Controller.AdvanceScenarioStep(gameObject);
+                } else {
+                    Controller.WrongScenarioStep(gameObject);
+                }
             }
         }
+
+        dialoguePreviousActive = Dialogue.activeSelf;
     }
 
     public void ShowValid() {
