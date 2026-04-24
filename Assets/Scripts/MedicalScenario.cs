@@ -10,4 +10,13 @@ public class MedicalScenario : ScriptableObject {
     public string StartMessage;
     public string[] FailMessages;
     public string SuccessMessage;
+
+    [HideInInspector]
+    public bool Started;
+
+    [HideInInspector]
+    public bool Failed;
+
+    [HideInInspector]
+    public bool Completed;
 }

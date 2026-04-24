@@ -39,7 +39,7 @@ public class Item : MonoBehaviour {
             var ray = Camera.main.ScreenToWorldPoint(InputPoint.action.ReadValue<Vector2>());
             var hit = Physics2D.Raycast(ray, Vector2.zero);
 
-            if (hit.collider == Collider) {
+            if (hit.collider == Collider && !Controller.FailedScenario() && !Controller.CompletedScenario()) {
                 if (Controller.ValidateScenarioStep(InfoItem)) {
                     Controller.AdvanceScenarioStep(gameObject);
                 } else {

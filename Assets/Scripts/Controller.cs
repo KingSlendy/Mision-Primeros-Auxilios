@@ -1,9 +1,9 @@
-using System;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+
 using Random = UnityEngine.Random;
 
 public class Controller : MonoBehaviour {
@@ -28,7 +28,7 @@ public class Controller : MonoBehaviour {
     }
 
     void Start() {
-        StartScenario();
+        SetupScenario();
     }
 
     void Update() {
@@ -39,6 +39,10 @@ public class Controller : MonoBehaviour {
     void DoClick(InputAction.CallbackContext context) {
         if (Dialogue.activeSelf) {
             Dialogue.SetActive(false);
+
+            if (!StartedScenario() && !FailedScenario() && !CompletedScenario()) {
+                StartScenarioTime();
+            }
         }
     }
 
@@ -47,9 +51,12 @@ public class Controller : MonoBehaviour {
         Dialogue.SetActive(true);
     }
 
-    void StartScenario() {
+    void SetupScenario() {
         //Spawns all the necessary medical items, and an extra dummy medical item
         currentScenario = Scenarios[0];
+        currentScenario.Started = false;
+        currentScenario.Failed = false;
+        currentScenario.Completed = false;
         Background.sprite = currentScenario.Backgrounds[Random.Range(0, currentScenario.Backgrounds.Length)];
         Background.gameObject.transform.localScale = new Vector3(1920f / Background.sprite.rect.width, 1080f / Background.sprite.rect.height, 1f);
 
@@ -61,8 +68,8 @@ public class Controller : MonoBehaviour {
         }
 
         scenarioStep = 0;
+        scenarioTime = currentScenario.TimeInSeconds;
         StartDialogue(currentScenario.StartMessage);
-        //StartScenarioTime();
     }
 
     void SpawnMedicalItem(MedicalItem item, Vector2 area) {
@@ -77,17 +84,43 @@ public class Controller : MonoBehaviour {
 
     void StartScenarioTime() {
         scenarioTime = currentScenario.TimeInSeconds;
-        InvokeRepeating(nameof(SubtractScenarioTime), 1f, 1f);
+        InvokeRepeating(nameof(InvokeScenarioTime), 1f, 1f);
+        //currentScenario.Started = true;
     }
 
-    void SubtractScenarioTime() {
-        scenarioTime--;
+    void InvokeScenarioTime() {
+        SubtractScenarioTime(1);
+    }
 
-        if (scenarioTime < 0) {
+    bool SubtractScenarioTime(int amount = 1) {
+        scenarioTime -= amount;
+
+        if (scenarioTime <= 0) {
             scenarioTime = 0;
-            Debug.Log("Time's up!");
             StartDialogue("¡Se acabó el tiempo! No lograste curar al paciente...");
+            StopScenarioTime();
+            currentScenario.Failed = true;
+            return false;
         }
+
+        return true;
+    }
+
+    void StopScenarioTime() {
+        CancelInvoke(nameof(InvokeScenarioTime));
+        currentScenario.Started = false;
+    }
+
+    public bool StartedScenario() {
+        return (currentScenario.Started);
+    }
+
+    public bool FailedScenario() {
+        return (currentScenario.Failed);
+    }
+
+    public bool CompletedScenario() {
+        return (currentScenario.Completed);
     }
 
     public bool ValidateScenarioStep(MedicalItem item) {
@@ -101,8 +134,9 @@ public class Controller : MonoBehaviour {
 
         if (scenarioStep >= currentScenario.NecessaryItems.Length - 1) {
             scenarioStep = 0;
+            currentScenario.Completed = true;
+            StopScenarioTime();
             StartDialogue(currentScenario.SuccessMessage);
-            //Complete Scenario
             return;
         }
 
@@ -112,14 +146,20 @@ public class Controller : MonoBehaviour {
     public void WrongScenarioStep(GameObject item) {
         var itemComponent = item.GetComponent<Item>();
         itemComponent.ShowInvalid();
-        scenarioTime -= 30;
+
+        if (SubtractScenarioTime(15)) {
+            return;
+        }
+
         scenarioFails++;
 
         if (scenarioFails % 3 == 0) {
             if (itemComponent.InfoItem != currentScenario.DummyItem) {
                 StartDialogue(currentScenario.FailMessages[scenarioStep]);
+                StopScenarioTime();
             } else {
                 StartDialogue(currentScenario.FailMessages[^1]);
+                StopScenarioTime();
             }
         }
     }
