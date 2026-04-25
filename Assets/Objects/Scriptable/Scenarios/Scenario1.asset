@@ -32,4 +32,8 @@ MonoBehaviour:
   - "La curita va a lo \xFAltimo."
   - Ese paso no se debe de realizar en este caso.
   SuccessMessage: "\xA1Felicidades! Una cortada peque\xF1a es f\xE1cil de tratar
-    pero debes de actuar r\xE1pido para evitar una infecci\xF3n m\xE1s grave."
+    pero debes de actuar r\xE1pido para evitar una infecci\xF3n m\xE1s grave. Eso
+    es todo."
+  Started: 0
+  Failed: 0
+  Completed: 0
