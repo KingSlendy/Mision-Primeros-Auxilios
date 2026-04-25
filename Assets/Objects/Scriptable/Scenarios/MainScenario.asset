@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af6eaf8af7f5ec48a18b03ef424166a, type: 3}
+  m_Name: MainScenario
+  m_EditorClassIdentifier: Assembly-CSharp::MedicalScenario
+  Name: "Cortada peque\xF1a en dedo"
+  NecessaryItems:
+  - {fileID: 11400000, guid: 85f97fc4a247e73459cb378be77e91c5, type: 2}
+  - {fileID: 11400000, guid: 0d61072a8613c474681c55772b5b3b86, type: 2}
+  - {fileID: 11400000, guid: b2e8dd31a0a9eed4fb92fcbcdf5d02fc, type: 2}
+  - {fileID: 11400000, guid: e2ffd7e7b73937849964eacc2ae5c8cd, type: 2}
+  - {fileID: 11400000, guid: 22237cddbc1b31f47b77c2b976785232, type: 2}
+  - {fileID: 11400000, guid: 39c917f402310b44fb6206bb1adb6bed, type: 2}
+  DummyItem: {fileID: 11400000, guid: bd42f65a1f973884ca498e6377e86df1, type: 2}
+  TimeInSeconds: 20
+  Backgrounds:
+  - {fileID: -5281422124547630143, guid: cce5a0ee90bcfcc49b9282c92340d90d, type: 3}
+  StartMessage: "Este paciente acaba de sufrir un accidente grave y le ocasion\xF3
+    una apertura tor\xE1cica.\\nAct\xFAa r\xE1pido eligiendo los pasos en el orden
+    correcto para sanar su herida antes de que pierda sangre."
+  FailMessages:
+  - El agua va primero.
+  - "El jab\xF3n va segundo."
+  - El desinfectante va tercero.
+  - "La curita va a lo \xFAltimo."
+  - Ese paso no se debe de realizar en este caso.
+  SuccessMessage: "\xA1Felicidades! Has curado satisfactoriamente al paciente. Sigue
+    as\xED y pronto ser\xE1s un m\xE9dico de verdad."
+  Started: 0
+  Failed: 0
+  Completed: 1

@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Cloth
   m_EditorClassIdentifier: Assembly-CSharp::MedicalItem
   Name: Trapo
-  Icon: {fileID: 0}
+  Icon: {fileID: -7775649970217235406, guid: 7f34a536651aeb54eae312dd0d2e4ac8, type: 3}

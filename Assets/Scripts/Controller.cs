@@ -61,10 +61,10 @@ public class Controller : MonoBehaviour {
         Background.gameObject.transform.localScale = new Vector3(1920f / Background.sprite.rect.width, 1080f / Background.sprite.rect.height, 1f);
 
         var itemCount = currentScenario.NecessaryItems.Length + 1;
-        var shuffledItems = currentScenario.NecessaryItems.OrderBy(x => Random.Range(0, itemCount)).Append(currentScenario.DummyItem).ToArray();
+        var shuffledItems = currentScenario.NecessaryItems.Append(currentScenario.DummyItem).OrderBy(x => Random.Range(0, itemCount)).ToArray();
 
         for (var i = 0; i < itemCount; i++) {
-            SpawnMedicalItem(shuffledItems[i], new Vector2(-7.5f + 3.5f * i + Random.Range(-1f, 1f), Random.Range(-1f, 2f)));
+            SpawnMedicalItem(shuffledItems[i], new Vector2(-7f + 2.25f * i + Random.Range(-0.5f, 0.5f), Random.Range(-1f, 2f)));
         }
 
         scenarioStep = 0;
@@ -147,11 +147,12 @@ public class Controller : MonoBehaviour {
         var itemComponent = item.GetComponent<Item>();
         itemComponent.ShowInvalid();
 
-        if (SubtractScenarioTime(15)) {
+        if (!SubtractScenarioTime(15)) {
             return;
         }
 
         scenarioFails++;
+        return;
 
         if (scenarioFails % 3 == 0) {
             if (itemComponent.InfoItem != currentScenario.DummyItem) {
