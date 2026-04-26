@@ -1,4 +1,3 @@
-using Microsoft.Unity.VisualStudio.Editor;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -37,7 +36,7 @@ public class Cinematic : MonoBehaviour {
                     AdvanceSequence();
                 } else {
                     currentFade = 0;
-                    Invoke(nameof(AdvanceSequence), 3f);    
+                    Invoke(nameof(AdvanceSequence), 2f);    
                 }
 
                 alphaFade = 1f;

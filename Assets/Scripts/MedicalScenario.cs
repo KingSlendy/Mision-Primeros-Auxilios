@@ -8,7 +8,7 @@ public class MedicalScenario : ScriptableObject {
     public int TimeInSeconds;
     public Sprite[] Backgrounds;
     public string StartMessage;
-    public string[] FailMessages;
+    public string FailMessage;
     public string SuccessMessage;
 
     [HideInInspector]

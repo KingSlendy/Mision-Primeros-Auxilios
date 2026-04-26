@@ -2,6 +2,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 using Random = UnityEngine.Random;
@@ -10,9 +11,15 @@ public class Controller : MonoBehaviour {
     public GameObject Dialogue;
     public GameObject Item;
     public SpriteRenderer Background;
+    public GameObject TimeBar;
     public Image TimeBarFill;
+    public GameObject RetryButton;
+    public GameObject ReturnButton;
 
     public MedicalScenario[] Scenarios;
+
+    public Sprite Victory;
+    public Sprite Loss;
 
     public InputActionReference InputClick;
 
@@ -20,7 +27,6 @@ public class Controller : MonoBehaviour {
     MedicalScenario currentScenario;
     int scenarioStep;
     int scenarioTime;
-    int scenarioFails;
 
     void Awake() {
         dialogueText = Dialogue.transform.Find("Region").Find("Text").GetComponent<TextMeshProUGUI>();
@@ -43,6 +49,14 @@ public class Controller : MonoBehaviour {
             if (!StartedScenario() && !FailedScenario() && !CompletedScenario()) {
                 StartScenarioTime();
             }
+
+            if (FailedScenario()) {
+                ResultsChange(false);
+            }
+
+            if (CompletedScenario()) {
+                ResultsChange(true);
+            }
         }
     }
 
@@ -57,8 +71,7 @@ public class Controller : MonoBehaviour {
         currentScenario.Started = false;
         currentScenario.Failed = false;
         currentScenario.Completed = false;
-        Background.sprite = currentScenario.Backgrounds[Random.Range(0, currentScenario.Backgrounds.Length)];
-        Background.gameObject.transform.localScale = new Vector3(1920f / Background.sprite.rect.width, 1080f / Background.sprite.rect.height, 1f);
+        ChangeBackground(currentScenario.Backgrounds[Random.Range(0, currentScenario.Backgrounds.Length)]);
 
         var itemCount = currentScenario.NecessaryItems.Length + 1;
         var shuffledItems = currentScenario.NecessaryItems.Append(currentScenario.DummyItem).OrderBy(x => Random.Range(0, itemCount)).ToArray();
@@ -70,6 +83,11 @@ public class Controller : MonoBehaviour {
         scenarioStep = 0;
         scenarioTime = currentScenario.TimeInSeconds;
         StartDialogue(currentScenario.StartMessage);
+    }
+
+    void ChangeBackground(Sprite background) {
+        Background.sprite = background;
+        Background.gameObject.transform.localScale = new Vector3(1920f / Background.sprite.rect.width, 1080f / Background.sprite.rect.height, 1f);
     }
 
     void SpawnMedicalItem(MedicalItem item, Vector2 area) {
@@ -97,7 +115,7 @@ public class Controller : MonoBehaviour {
 
         if (scenarioTime <= 0) {
             scenarioTime = 0;
-            StartDialogue("¡Se acabó el tiempo! No lograste curar al paciente...");
+            StartDialogue(currentScenario.FailMessage);
             StopScenarioTime();
             currentScenario.Failed = true;
             return false;
@@ -130,7 +148,6 @@ public class Controller : MonoBehaviour {
     public void AdvanceScenarioStep(GameObject item) {
         var itemComponent = item.GetComponent<Item>();
         itemComponent.ShowValid();
-        scenarioFails = 0;
 
         if (scenarioStep >= currentScenario.NecessaryItems.Length - 1) {
             scenarioStep = 0;
@@ -146,22 +163,31 @@ public class Controller : MonoBehaviour {
     public void WrongScenarioStep(GameObject item) {
         var itemComponent = item.GetComponent<Item>();
         itemComponent.ShowInvalid();
+        SubtractScenarioTime(5);
+    }
 
-        if (!SubtractScenarioTime(15)) {
-            return;
+    void ResultsChange(bool victory) {
+        var background = (victory) ? Victory : Loss;
+        ChangeBackground(background);
+
+        foreach (var item in FindObjectsByType<Item>()) {
+            item.gameObject.SetActive(false);
         }
 
-        scenarioFails++;
-        return;
+        TimeBar.SetActive(false);
 
-        if (scenarioFails % 3 == 0) {
-            if (itemComponent.InfoItem != currentScenario.DummyItem) {
-                StartDialogue(currentScenario.FailMessages[scenarioStep]);
-                StopScenarioTime();
-            } else {
-                StartDialogue(currentScenario.FailMessages[^1]);
-                StopScenarioTime();
-            }
+        if (victory) {
+            ReturnButton.SetActive(true);
+        } else {
+            RetryButton.SetActive(true);
         }
+    }
+
+    public void Retry() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void ReturnMenu() {
+        SceneManager.LoadScene("TitleScene");
     }
 }

@@ -26,15 +26,11 @@ MonoBehaviour:
   - {fileID: -5281422124547630143, guid: cce5a0ee90bcfcc49b9282c92340d90d, type: 3}
   StartMessage: "Este paciente acaba de sufrir un accidente grave y le ocasion\xF3
     una apertura tor\xE1cica.\\nAct\xFAa r\xE1pido eligiendo los pasos en el orden
-    correcto para sanar su herida antes de que pierda sangre."
-  FailMessages:
-  - El agua va primero.
-  - "El jab\xF3n va segundo."
-  - El desinfectante va tercero.
-  - "La curita va a lo \xFAltimo."
-  - Ese paso no se debe de realizar en este caso.
+    correcto para sanar su herida antes de que pierda m\xE1s sangre."
+  FailMessage: "\xA1Ya es tarde! El paciente perdi\xF3 demasiada sangre... ya no
+    se puede hacer nada, lo hemos perdido..."
   SuccessMessage: "\xA1Felicidades! Has curado satisfactoriamente al paciente. Sigue
     as\xED y pronto ser\xE1s un m\xE9dico de verdad."
   Started: 0
   Failed: 0
-  Completed: 1
+  Completed: 0
